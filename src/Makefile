@@ -1,5 +1,5 @@
 CFLAGS =  -g -Wall -fPIC 
-OBJECTS = add.o
+OBJECTS = add.o range.o
 CC = g++
 INSTALL_DIR = /usr/local/include/libnanc++
 
