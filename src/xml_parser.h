@@ -1,17 +1,5 @@
-//=======================================================================
-
-// ***	Copyright(c) 2014 纵游网络. 
-// ***	All rights reserved.
-
-// ***	@File	  xXmlParser.h
-// ***	@Author	  tufeixiang at 15:24:30 2012/05/22
-// ***	@Brief	  XML解析类的封装
-// ***	@Version  $Id: xXmlParser.h 40 2012-05-25 11:14:44Z tufeixiang $
-
-//=======================================================================
-
-#ifndef _X_XML_PARSER_H
-#define _X_XML_PARSER_H
+#ifndef _XML_PARSER_H
+#define _XML_PARSER_H
 
 #include <string>
 
@@ -22,12 +10,12 @@
 /**
  *	@brief	XML解析器类定义
  */
-class xXmlParser
+class XmlParser
 {
 	public:
 
-		xXmlParser();		
-		~xXmlParser();		
+		XmlParser();		
+		~XmlParser();		
 
 		bool initFile(const std::string &fileName_);
 		bool initFile(const char *fileName_);

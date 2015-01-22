@@ -1,23 +1,11 @@
-//=========================================================================
-
-// ***	Copyright(c) 2014 纵游网络. 
-// ***	All rights reserved.
-
-// ***	@File	  xXmlParser.cpp
-// ***	@Author	  tufeixiang at 15:24:30 2012/05/22
-// ***	@Brief	  XML解析类的接口实现
-// ***	@Version  $Id: xXmlParser.cpp 40 2012-05-25 11:14:44Z tufeixiang $
-
-//=========================================================================
-
 #include <iconv.h>
 #include <string.h>
 #include <strings.h>
+#include <stdint.h>
 
 #include <iostream>
 
-#include "xType.h"
-#include "xXmlParser.h"
+#include "xml_parser.h"
 
 static void finalLibXml2() __attribute__ ((destructor));
 void finalLibXml2()
@@ -25,22 +13,22 @@ void finalLibXml2()
 	xmlCleanupParser();
 }
 
-xXmlParser::xXmlParser()
+XmlParser::XmlParser()
 	:	m_doc(NULL)
 {
 }
 
-xXmlParser::~xXmlParser()
+XmlParser::~XmlParser()
 {
 	final();
 }
 
-bool xXmlParser::initFile(const std::string &fileName_)
+bool XmlParser::initFile(const std::string &fileName_)
 {
 	return initFile(fileName_.c_str());
 }
 
-bool xXmlParser::initFile(const char * fileName_)
+bool XmlParser::initFile(const char * fileName_)
 {
 	final();
 	if(!fileName_) return false;
@@ -48,12 +36,12 @@ bool xXmlParser::initFile(const char * fileName_)
 	return (m_doc != NULL);
 }
 
-bool xXmlParser::initStr(const std::string &xml_)
+bool XmlParser::initStr(const std::string &xml_)
 {
 	return initStr(xml_.c_str());
 }
 
-bool xXmlParser::initStr(const char *xml_)
+bool XmlParser::initStr(const char *xml_)
 {
 	final();
 	if(!xml_) return false;
@@ -61,14 +49,14 @@ bool xXmlParser::initStr(const char *xml_)
 	return (m_doc != NULL);
 }
 
-bool xXmlParser::init()
+bool XmlParser::init()
 {
 	final();
 	m_doc = xmlNewDoc((const xmlChar *)"1.0");
 	return (m_doc != NULL);
 }
 
-void xXmlParser::final()
+void XmlParser::final()
 {
 	if(m_doc)
 	{
@@ -77,7 +65,7 @@ void xXmlParser::final()
 	}
 }
 
-std::string & xXmlParser::dump(std::string &s_, bool format_)
+std::string & XmlParser::dump(std::string &s_, bool format_)
 {
 	if(m_doc)
 	{
@@ -94,7 +82,7 @@ std::string & xXmlParser::dump(std::string &s_, bool format_)
 	return s_;
 }
 
-std::string & xXmlParser::dump(std::string &s_, const char *encoding_)
+std::string & XmlParser::dump(std::string &s_, const char *encoding_)
 {
 	if(m_doc)
 	{
@@ -112,7 +100,7 @@ std::string & xXmlParser::dump(std::string &s_, const char *encoding_)
 	return s_;
 }
 
-std::string & xXmlParser::dump(xmlNodePtr dumpNode_, std::string &s_, bool head_)
+std::string & XmlParser::dump(xmlNodePtr dumpNode_, std::string &s_, bool head_)
 {
 	if(NULL == dumpNode_) return s_;
 
@@ -139,7 +127,7 @@ std::string & xXmlParser::dump(xmlNodePtr dumpNode_, std::string &s_, bool head_
 	return s_;
 }
 
-xmlNodePtr xXmlParser::getRootNode(const char *rootName_)
+xmlNodePtr XmlParser::getRootNode(const char *rootName_)
 {
 	if(!m_doc) return NULL;
 
@@ -152,7 +140,7 @@ xmlNodePtr xXmlParser::getRootNode(const char *rootName_)
 	return cur;
 }
 
-xmlNodePtr xXmlParser::getChildNode(const xmlNodePtr parent_, const char *childName_)
+xmlNodePtr XmlParser::getChildNode(const xmlNodePtr parent_, const char *childName_)
 {
 	if(!m_doc) return NULL;
 
@@ -176,7 +164,7 @@ xmlNodePtr xXmlParser::getChildNode(const xmlNodePtr parent_, const char *childN
 	return retval;
 }
 
-unsigned int xXmlParser::getChildNodeNum(const xmlNodePtr parent_, const char *childName_)
+unsigned int XmlParser::getChildNodeNum(const xmlNodePtr parent_, const char *childName_)
 {
 	int retval = 0;
 	if(!parent_) return retval;
@@ -201,7 +189,7 @@ unsigned int xXmlParser::getChildNodeNum(const xmlNodePtr parent_, const char *c
 	return retval;
 }
 
-xmlNodePtr xXmlParser::getNextNode(const xmlNodePtr node_, const char *nextName_)
+xmlNodePtr XmlParser::getNextNode(const xmlNodePtr node_, const char *nextName_)
 {
 	if(!node_) return NULL;
 
@@ -225,7 +213,7 @@ xmlNodePtr xXmlParser::getNextNode(const xmlNodePtr node_, const char *nextName_
 	return retval;
 }
 
-xmlNodePtr xXmlParser::newRootNode(const char *rootName_)
+xmlNodePtr XmlParser::newRootNode(const char *rootName_)
 {
 	if(NULL == m_doc) return NULL;
 
@@ -235,21 +223,21 @@ xmlNodePtr xXmlParser::newRootNode(const char *rootName_)
 	return rootNode;
 }
 
-xmlNodePtr xXmlParser::newChildNode(const xmlNodePtr parent_, const char *childName_, const char *content_)
+xmlNodePtr XmlParser::newChildNode(const xmlNodePtr parent_, const char *childName_, const char *content_)
 {
 	if(!parent_) return NULL;
 
 	return xmlNewChild(parent_, NULL, (const xmlChar *)childName_, (const xmlChar *)content_);
 }
 
-bool xXmlParser::newNodeProp(const xmlNodePtr node_, const char *propName_, const char *prop_)
+bool XmlParser::newNodeProp(const xmlNodePtr node_, const char *propName_, const char *prop_)
 {
 	if(!node_) return false;
 
 	return (NULL != xmlNewProp(node_, (const xmlChar *)propName_, (const xmlChar *)prop_));
 }
 
-bool xXmlParser::getNodePropNum(const xmlNodePtr node_, const char *propName_, void *prop_, int propSize_)
+bool XmlParser::getNodePropNum(const xmlNodePtr node_, const char *propName_, void *prop_, int propSize_)
 {
 	char *tmp = NULL;
 	bool ret = true;
@@ -261,20 +249,20 @@ bool xXmlParser::getNodePropNum(const xmlNodePtr node_, const char *propName_, v
 
 	switch(propSize_)
 	{
-		case sizeof(BYTE):
-			*(BYTE *)prop_ = (BYTE)atoi(tmp);
+		case sizeof(uint8_t):
+			*(uint8_t *)prop_ = (uint8_t)atoi(tmp);
 			break;
 
-		case sizeof(WORD):
-			*(WORD *)prop_ = (WORD)atoi(tmp);
+		case sizeof(int16_t):
+			*(int16_t *)prop_ = (int16_t)atoi(tmp);
 			break;
 
-		case sizeof(DWORD):
-			*(DWORD *)prop_ = atoi(tmp);
+		case sizeof(int32_t):
+			*(int32_t *)prop_ = atoi(tmp);
 			break;
 
-		case sizeof(QWORD):
-			*(QWORD *)prop_ = atoll(tmp);
+		case sizeof(uint32_t):
+			*(uint32_t *)prop_ = atoll(tmp);
 			break;
 
 		default:
@@ -285,7 +273,7 @@ bool xXmlParser::getNodePropNum(const xmlNodePtr node_, const char *propName_, v
 	return ret;
 }
 
-bool xXmlParser::getNodePropStr(const xmlNodePtr node_, const char *propName_, void *prop_, int propSize_)
+bool XmlParser::getNodePropStr(const xmlNodePtr node_, const char *propName_, void *prop_, int propSize_)
 {
 	char *tmp = NULL;
 	bool ret = true;
@@ -307,7 +295,7 @@ bool xXmlParser::getNodePropStr(const xmlNodePtr node_, const char *propName_, v
 	return ret;
 }
 
-bool xXmlParser::getNodePropStr(const xmlNodePtr node_, const char *propName_, std::string &prop_)
+bool XmlParser::getNodePropStr(const xmlNodePtr node_, const char *propName_, std::string &prop_)
 {
 	char *tmp = NULL;
 	bool ret = true;
@@ -328,7 +316,7 @@ bool xXmlParser::getNodePropStr(const xmlNodePtr node_, const char *propName_, s
 	return ret;
 }
 
-bool xXmlParser::getNodeContentNum(const xmlNodePtr node_, void *content_, int contentSize_)
+bool XmlParser::getNodeContentNum(const xmlNodePtr node_, void *content_, int contentSize_)
 {
 	char *tmp = NULL;
 	bool ret = true;
@@ -352,20 +340,20 @@ bool xXmlParser::getNodeContentNum(const xmlNodePtr node_, void *content_, int c
 
 	switch(contentSize_)
 	{
-		case sizeof(BYTE):
-			*(BYTE *)content_ = (BYTE)atoi(tmp);
+		case sizeof(uint8_t):
+			*(uint8_t *)content_ = (uint8_t)atoi(tmp);
 			break;
 
-		case sizeof(WORD):
-			*(WORD *)content_ = (WORD)atoi(tmp);
+		case sizeof(int16_t):
+			*(int16_t *)content_ = (int16_t)atoi(tmp);
 			break;
 
-		case sizeof(DWORD):
-			*(DWORD *)content_ = atoi(tmp);
+		case sizeof(int32_t):
+			*(int32_t *)content_ = atoi(tmp);
 			break;
 
-		case sizeof(QWORD):
-			*(QWORD *)content_ = atoll(tmp);
+		case sizeof(uint32_t):
+			*(uint32_t *)content_ = atoll(tmp);
 			break;
 
 		default:
@@ -375,7 +363,7 @@ bool xXmlParser::getNodeContentNum(const xmlNodePtr node_, void *content_, int c
 	return ret;
 }
 
-bool xXmlParser::getNodeContentStr(const xmlNodePtr node_, void *content_, int contentSize_)
+bool XmlParser::getNodeContentStr(const xmlNodePtr node_, void *content_, int contentSize_)
 {
 	char *tmp = NULL;
 	bool ret = true;
@@ -408,7 +396,7 @@ bool xXmlParser::getNodeContentStr(const xmlNodePtr node_, void *content_, int c
 	return ret;
 }
 
-bool xXmlParser::getNodeContentStr(const xmlNodePtr node_, std::string &content_)
+bool XmlParser::getNodeContentStr(const xmlNodePtr node_, std::string &content_)
 {
 	char *tmp = NULL;
 	bool ret = true;
@@ -440,7 +428,7 @@ bool xXmlParser::getNodeContentStr(const xmlNodePtr node_, std::string &content_
 	return ret;
 }
 
-unsigned char * xXmlParser::charConv(unsigned char *in_, const char *fromEncoding_, const char *toEncoding_)
+unsigned char * XmlParser::charConv(unsigned char *in_, const char *fromEncoding_, const char *toEncoding_)
 {
 	unsigned char *out = NULL;
 	size_t ret, size, outSize;

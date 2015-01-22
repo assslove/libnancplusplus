@@ -1,5 +1,5 @@
-CFLAGS =  -g -Wall -fPIC  -O2
-OBJECTS = add.o range.o
+CFLAGS =  -g -Wall -fPIC  -O2 -I/usr/include/libxml2
+OBJECTS = add.o range.o xml_parser.o
 CC = g++
 INSTALL_DIR = /usr/local/include/libnanc++
 
