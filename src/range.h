@@ -82,9 +82,13 @@ class RangeManager {
 			}
 
 			return NULL;
-
 		}
 
+		/* @brief 获得range_vec
+		 */
+		RangeVec& get_range_vec() {
+			return range_vec;
+		}
 	private:
 		RangeVec range_vec;
 
