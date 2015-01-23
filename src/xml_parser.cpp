@@ -100,32 +100,6 @@ std::string & XmlParser::dump(std::string &s_, const char *encoding_)
 	return s_;
 }
 
-std::string & XmlParser::dump(xmlNodePtr dumpNode_, std::string &s_, bool head_)
-{
-	if(NULL == dumpNode_) return s_;
-
-	xmlBufferPtr out = xmlBufferCreate();
-	if(xmlNodeDump(out, m_doc, dumpNode_, 1, 1) != -1)
-	{
-		unsigned char *cout = charConv((unsigned char *)out->content, "UTF-8", (const char *)m_doc->encoding);
-		if(cout)
-		{
-			if(head_)
-			{
-				s_ = "<?xml version=\"1.0\" encoding=\"";
-				s_ += (char *)m_doc->encoding;
-				s_ += "\"?>";
-			}
-			else s_ = "";
-
-			s_ += (char *)cout;
-			SAFE_DELETE_VEC(cout);
-		}
-	}
-
-	xmlBufferFree(out);
-	return s_;
-}
 
 xmlNodePtr XmlParser::getRootNode(const char *rootName_)
 {
@@ -261,8 +235,8 @@ bool XmlParser::getNodePropNum(const xmlNodePtr node_, const char *propName_, vo
 			*(int32_t *)prop_ = atoi(tmp);
 			break;
 
-		case sizeof(uint32_t):
-			*(uint32_t *)prop_ = atoll(tmp);
+		case sizeof(uint64_t):
+			*(uint64_t *)prop_ = atoll(tmp);
 			break;
 
 		default:
@@ -275,44 +249,24 @@ bool XmlParser::getNodePropNum(const xmlNodePtr node_, const char *propName_, vo
 
 bool XmlParser::getNodePropStr(const xmlNodePtr node_, const char *propName_, void *prop_, int propSize_)
 {
-	char *tmp = NULL;
 	bool ret = true;
 
 	if(!node_ || !prop_ || !propName_) return false;
 
-	tmp = (char *)xmlGetProp(node_, (const xmlChar *)propName_);
-	if(!tmp) return false;
+	prop_= (char *)xmlGetProp(node_, (const xmlChar *)propName_);
+	if(!prop_) return false;
 
-	unsigned char *out = charConv((unsigned char *)tmp, "UTF-8", (const char *)m_doc->encoding);
-	if(out)
-	{
-		bzero(prop_, propSize_);
-		strncpy((char *)prop_, (const char *)out, propSize_ - 1);
-		SAFE_DELETE_VEC(out);
-	}
-
-	if(tmp) xmlFree(tmp);
 	return ret;
 }
 
 bool XmlParser::getNodePropStr(const xmlNodePtr node_, const char *propName_, std::string &prop_)
 {
-	char *tmp = NULL;
 	bool ret = true;
 
 	if(!node_ || !propName_) return false;
+	prop_ = (char *)xmlGetProp(node_, (const xmlChar *)propName_);
+	if(!prop_.size()) return false;
 
-	tmp = (char *)xmlGetProp(node_, (const xmlChar *)propName_);
-	if(!tmp) return false;
-
-	unsigned char *out = charConv((unsigned char *)tmp, "UTF-8", (const char *)m_doc->encoding);
-	if(out)
-	{
-		prop_ = (char*)out;
-		SAFE_DELETE_VEC(out);
-	}
-
-	if(tmp) xmlFree(tmp);
 	return ret;
 }
 
@@ -352,7 +306,7 @@ bool XmlParser::getNodeContentNum(const xmlNodePtr node_, void *content_, int co
 			*(int32_t *)content_ = atoi(tmp);
 			break;
 
-		case sizeof(uint32_t):
+		case sizeof(uint64_t):
 			*(uint32_t *)content_ = atoll(tmp);
 			break;
 
@@ -363,110 +317,4 @@ bool XmlParser::getNodeContentNum(const xmlNodePtr node_, void *content_, int co
 	return ret;
 }
 
-bool XmlParser::getNodeContentStr(const xmlNodePtr node_, void *content_, int contentSize_)
-{
-	char *tmp = NULL;
-	bool ret = true;
 
-	if(!node_ || !content_) return false;
-	
-	xmlNodePtr text = node_->children;
-
-	while(text)
-	{
-		if(!xmlStrcmp(text->name, (const xmlChar *)"text"))
-		{
-			tmp = (char *)text->content;
-			break;
-		}
-
-		text = text->next;
-	}
-
-	if(!tmp) return false;
-
-	unsigned char *out = charConv((unsigned char *)tmp, "UTF-8", (const char *)m_doc->encoding);
-	if(out)
-	{
-		bzero(content_, contentSize_);
-		strncpy((char *)content_, (const char *)out, contentSize_ - 1);
-		SAFE_DELETE_VEC(out);
-	}
-
-	return ret;
-}
-
-bool XmlParser::getNodeContentStr(const xmlNodePtr node_, std::string &content_)
-{
-	char *tmp = NULL;
-	bool ret = true;
-
-	if(!node_) return false;
-	
-	xmlNodePtr text = node_->children;
-
-	while(text)
-	{
-		if(!xmlStrcmp(text->name, (const xmlChar *)"text"))
-		{
-			tmp = (char *)text->content;
-			break;
-		}
-
-		text = text->next;
-	}
-
-	if(!tmp) return false;
-
-	unsigned char *out = charConv((unsigned char *)tmp, "UTF-8", (const char *)m_doc->encoding);
-	if(out)
-	{
-		content_ = (char *)out;
-		SAFE_DELETE_VEC(out);
-	}
-
-	return ret;
-}
-
-unsigned char * XmlParser::charConv(unsigned char *in_, const char *fromEncoding_, const char *toEncoding_)
-{
-	unsigned char *out = NULL;
-	size_t ret, size, outSize;
-
-	size = strlen((char *)in_);
-	outSize = size * 2 + 1;
-	out = new unsigned char[outSize];
-	bzero(out, outSize);
-
-	if(out)
-	{
-		if(fromEncoding_ && toEncoding_)
-		{
-			iconv_t icv_in = iconv_open(toEncoding_, fromEncoding_);
-			if((iconv_t)-1 == icv_in)
-			{
-				SAFE_DELETE_VEC(out);
-				out = NULL;
-			}
-			else
-			{
-				char *fromtmp = (char *)in_;
-				char *totmp = (char *)out;
-				size_t tmpout = outSize - 1;
-
-				ret = iconv(icv_in, &fromtmp, &size, &totmp, &tmpout);
-				if((size_t)-1 == ret)
-				{
-					SAFE_DELETE_VEC(out);
-					out = NULL;
-				}
-					
-				iconv_close(icv_in);
-			}
-		}
-		else
-			strncpy((char*)out, (char *)in_, size);
-	}
-
-	return out;
-}

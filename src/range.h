@@ -84,6 +84,12 @@ class RangeManager {
 			return NULL;
 		}
 
+		void print() {
+			for (RangeIter it = range_vec.begin(); it != range_vec.end(); ++it) {
+				it->print();
+			}
+		}
+
 		/* @brief 获得range_vec
 		 */
 		RangeVec& get_range_vec() {

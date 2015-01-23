@@ -1,5 +1,6 @@
 CFLAGS =  -g -Wall -fPIC  -O2 -I/usr/include/libxml2
-OBJECTS = add.o range.o xml_parser.o
+LIBS = `xml2-config --cflags --libs` 
+OBJECTS = add.o  xml_parser.o
 CC = g++
 INSTALL_DIR = /usr/local/include/libnanc++
 
@@ -9,10 +10,10 @@ libnanc++.a : $(OBJECTS)
 	ar -cru libnanc++.a $(OBJECTS)
 
 libnanc++.so : $(OBJECTS)
-	$(CC) $< -shared -o libnanc++.so
+	$(CC)  $< -shared -o libnanc++.so
 
 %.o : %.cpp
-	$(CC) $(CFLAGS) -c  $< -o $@
+	$(CC) $(CFLAGS) $(LIBS) -c  $< -o $@
 
 clean:
 	-rm $(OBJECTS) libnanc++.a libnanc++.so

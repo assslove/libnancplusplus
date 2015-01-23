@@ -3,9 +3,11 @@
 
 #include <string>
 
+extern "C" {
 #include <libxml/tree.h>
 #include <libxml/parser.h>
 #include <libxml/xmlmemory.h>
+}
 
 /**
  *	@brief	XML解析器类定义
@@ -26,7 +28,6 @@ class XmlParser
 
 		std::string & dump(std::string &s_, bool format_ = false);
 		std::string & dump(std::string &s_, const char *encoding_);
-		std::string & dump(xmlNodePtr dumpNode_, std::string &s_, bool head_ = true);
 
 		xmlNodePtr getRootNode(const char *rootName_);
 		xmlNodePtr getChildNode(const xmlNodePtr parent_, const char *childName_);
@@ -43,12 +44,8 @@ class XmlParser
 		bool getNodePropStr(const xmlNodePtr node_, const char *propName_, std::string &prop_);
 
 		bool getNodeContentNum(const xmlNodePtr node_, void *content_, int contentSize_);
-		bool getNodeContentStr(const xmlNodePtr node_, void *content_, int contentSize_);
-		bool getNodeContentStr(const xmlNodePtr node_, std::string &content_);
 
 		xmlDocPtr &getDoc() { return m_doc; }
-
-		static unsigned char *charConv(unsigned char *in_, const char *fromEncoding_, const char *toEncoding_);
 
 	private:
 
