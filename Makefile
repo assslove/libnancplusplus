@@ -1,7 +1,7 @@
 
-CXXFLAGS =  -g -Wall -lnanc++
+CXXFLAGS =  -I/usr/local/include/libnanc++  -g -Wall
 CC = g++
-OBJ = singleton_test range_test  util_test
+OBJ = singleton_test range_test  util_test xml_test
 
 all : $(OBJ)
 	
@@ -13,6 +13,9 @@ range_test: test_range.cpp
 
 util_test: test_util.cpp
 	g++ $(CXXFLAGS) $< -o $@
+
+xml_test: test_xml.cpp
+	g++ -o $@ $< -I/usr/local/include/libxml2 $(CXXFLAGS) -L/usr/local/lib -lnanc++ -lxml2
 
 clean : 
 	rm -f $(OBJ)

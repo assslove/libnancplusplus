@@ -52,4 +52,4 @@ class XmlParser
 		xmlDocPtr m_doc;
 };
 
-#endif /* _X_XML_PARSER_H */
+#endif /* _XML_PARSER_H */
