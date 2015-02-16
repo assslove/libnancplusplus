@@ -67,7 +67,7 @@ class RangeManager {
 
 		/* @brief 查找区间
 		*/
-		const T* find(int value) {
+		const T* find(int value) const {
 			int start = 0, end = range_vec.size(), mid;
 
 			while (start <= end) {
@@ -92,7 +92,7 @@ class RangeManager {
 
 		/* @brief 获得range_vec
 		 */
-		RangeVec& get_range_vec() {
+		RangeVec& get_range_vec() { 
 			return range_vec;
 		}
 	private:
