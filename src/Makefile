@@ -1,6 +1,6 @@
 CXXFLAGS =  -g -Wall -fPIC
 LIBS = -I/usr/local/include/libxml2 -L/usr/local/lib -lxml2
-OBJECTS = add.o  xml_parser.o util.o
+OBJECTS = add.o  xml_parser.o util.o dirty.o
 CC = g++
 INSTALL_DIR = /usr/local/include/libnanc++
 
