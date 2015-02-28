@@ -48,6 +48,8 @@ void Dirty::insert(const wchar_t* str_)
 */
 void Dirty::initDirty(const char* name_)
 {
+	setlocale(LC_ALL, "zh_CN.UTF-8");//可以输出中文
+
 	FILE *fp  = fopen(name_, "r");
 	if (!fp) 
 	{
@@ -55,9 +57,9 @@ void Dirty::initDirty(const char* name_)
 		return ;
 	}
 
-	size_t len = 0;
+	size_t len = 256;
 	char* line = NULL;
-	wchar_t *wline = (wchar_t *)malloc(sizeof(wchar_t) * 10); //最长有10个词
+	wchar_t *wline = (wchar_t *)malloc(sizeof(wchar_t) * 100); //最长有10个词
 	if (!wline) 
 	{
 		fprintf(stderr, "malloc wchar failed\n");
@@ -100,8 +102,8 @@ void Dirty::displayNode(TrieNode *node_)
  */
 int Dirty::checkDirty(const char* content_) 
 {
-	int tmplen = strlen(content_);
-	wchar_t *wstr = (wchar_t *)malloc(sizeof(content_) * tmplen);
+	int tmplen = strlen(content_) + 1;
+	wchar_t *wstr = (wchar_t *)malloc(sizeof(wchar_t) * tmplen);
 	if (!wstr) 
 	{
 		return 0;
@@ -116,6 +118,9 @@ int Dirty::checkDirty(const char* content_)
 	{
 		for (int j = i; j < len; ++j) 
 		{
+			if (!node) {
+				break;
+			}
 			it = node->childs.find(wstr[j]);
 			if (it != node->childs.end()) 
 			{ //找到相应, 继续找下一个
@@ -147,8 +152,8 @@ int Dirty::checkDirty(const char* content_)
 */
 void Dirty::replaceDirty(char* content_) 
 {
-	int tmplen = strlen(content_);
-	wchar_t *wstr = (wchar_t *)malloc(sizeof(content_) * tmplen);
+	int tmplen = strlen(content_) + 1;
+	wchar_t *wstr = (wchar_t *)malloc(sizeof(wchar_t) * tmplen);
 	if (!wstr) 
 	{
 		return ;
@@ -162,6 +167,9 @@ void Dirty::replaceDirty(char* content_)
 	{
 		for (int j = i; j < len; ++j) 
 		{
+			if (!node) {
+				break;
+			}
 			it = node->childs.find(wstr[j]);
 			if (it != node->childs.end()) 
 			{
