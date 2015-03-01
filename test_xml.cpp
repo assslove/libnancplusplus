@@ -6,20 +6,19 @@
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  2015年01月25日 20时26分09秒
- *       Revision:  none
+ *        Created:  2015年01月26日 08时03分40秒
  *       Compiler:  gcc
  *
  *         Author:	houbin , houbin-12@163.com
- *   Organization:  XiaoNan, Inc. ShangHai CN. All rights reserved.
  *
  * =====================================================================================
  */
 
 #include <libnanc++/xml_parser.h>
 
-int main(int argc, char* argv[])
+int main(int argc, char* argv[]) 
 {
-	XmlParser parser;
+	XmlParser xmlParser;
+	xmlParser.initFile("a.xml");
 	return 0;
 }
