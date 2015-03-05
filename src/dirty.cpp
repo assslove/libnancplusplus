@@ -4,6 +4,7 @@
  *       Filename:  dirty.cpp
  *
  *    Description:本敏感词过滤程序支持替换与检查操作，支持中文  
+ *					利用字典树实现 字典树利用map, 在百微秒内进行替换
  *
  *        Version:  1.0
  *        Created:  2015年02月26日 17时16分32秒
